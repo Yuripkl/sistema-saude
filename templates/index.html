@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Diagnóstico</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #d5f5e3; /* verde claro */
+            color: #2d3436;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #145a32;
+            margin-bottom: 30px;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+        }
+        .grupo {
+            margin-top: 10px;
+        }
+        button {
+            margin-top: 25px;
+            padding: 10px 20px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #1e8449;
+        }
+        #resposta {
+            margin-top: 30px;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #145a32;
+        }
+    </style>
+</head>
+<body>
+    <h2>Diagnóstico</h2>
+    <form id="formDiagnostico">
+        <div class="grupo">
+            <label>Está com febre?
+                <input type="radio" name="febre" value="s" required> Sim
+                <input type="radio" name="febre" value="n"> Não
+            </label>
+        </div>
+        <div class="grupo">
+            <label>Está com tosse?
+                <input type="radio" name="tosse" value="s" required> Sim
+                <input type="radio" name="tosse" value="n"> Não
+            </label>
+        </div>
+        <div class="grupo">
+            <label>Dores no corpo?
+                <input type="radio" name="corpo" value="s" required> Sim
+                <input type="radio" name="corpo" value="n"> Não
+            </label>
+        </div>
+        <div class="grupo">
+            <label>Dificuldade para respirar?
+                <input type="radio" name="respirar" value="s" required> Sim
+                <input type="radio" name="respirar" value="n"> Não
+            </label>
+        </div>
+        <div class="grupo">
+            <label>Perda de olfato ou paladar?
+                <input type="radio" name="olfato" value="s" required> Sim
+                <input type="radio" name="olfato" value="n"> Não
+            </label>
+        </div>
+        <button type="submit">Enviar Diagnóstico</button>
+    </form>
+
+    <div id="resposta"></div>
+
+    <script>
+        const form = document.getElementById("formDiagnostico");
+        const resposta = document.getElementById("resposta");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const data = Object.fromEntries(new FormData(form).entries());
+
+            const response = await fetch("http://127.0.0.1:5000/api/diagnostico", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            resposta.textContent = result.resposta;
+        });
+    </script>
+</body>
+</html>
