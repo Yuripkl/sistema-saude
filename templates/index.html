@@ -5,104 +5,87 @@
     <title>Diagnóstico</title>
     <style>
         body {
+            background-color: #d4f5dc;
             font-family: Arial, sans-serif;
-            background-color: #d5f5e3; /* verde claro */
-            color: #2d3436;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #2e7d32;
+            color: white;
+            padding: 15px 30px;
+            font-size: 24px;
+        }
+        .container {
+            background-color: white;
             max-width: 600px;
             margin: 40px auto;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
         }
         h2 {
             text-align: center;
-            color: #145a32;
-            margin-bottom: 30px;
+            color: #333;
         }
-        label {
-            display: block;
-            margin-top: 15px;
+        form {
+            margin-top: 20px;
         }
-        .grupo {
-            margin-top: 10px;
+        .pergunta {
+            margin-bottom: 15px;
+        }
+        .resultado {
+            margin-top: 20px;
+            font-size: 18px;
+            color: green;
+            text-align: center;
         }
         button {
-            margin-top: 25px;
+            display: block;
+            margin: 20px auto 0 auto;
             padding: 10px 20px;
-            background-color: #27ae60;
+            font-size: 16px;
+            background-color: #2e7d32;
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
         }
         button:hover {
-            background-color: #1e8449;
-        }
-        #resposta {
-            margin-top: 30px;
-            font-weight: bold;
-            font-size: 1.2em;
-            color: #145a32;
+            background-color: #27692a;
         }
     </style>
 </head>
 <body>
-    <h2>Diagnóstico</h2>
-    <form id="formDiagnostico">
-        <div class="grupo">
-            <label>Está com febre?
-                <input type="radio" name="febre" value="s" required> Sim
-                <input type="radio" name="febre" value="n"> Não
-            </label>
-        </div>
-        <div class="grupo">
-            <label>Está com tosse?
-                <input type="radio" name="tosse" value="s" required> Sim
-                <input type="radio" name="tosse" value="n"> Não
-            </label>
-        </div>
-        <div class="grupo">
-            <label>Dores no corpo?
-                <input type="radio" name="corpo" value="s" required> Sim
-                <input type="radio" name="corpo" value="n"> Não
-            </label>
-        </div>
-        <div class="grupo">
-            <label>Dificuldade para respirar?
-                <input type="radio" name="respirar" value="s" required> Sim
-                <input type="radio" name="respirar" value="n"> Não
-            </label>
-        </div>
-        <div class="grupo">
-            <label>Perda de olfato ou paladar?
-                <input type="radio" name="olfato" value="s" required> Sim
-                <input type="radio" name="olfato" value="n"> Não
-            </label>
-        </div>
-        <button type="submit">Enviar Diagnóstico</button>
-    </form>
+    <header>SuaSaúde</header>
+    <div class="container">
+        <h2>Diagnóstico</h2>
+        <form method="POST">
+            {% for pergunta in [
+                ('febre', 'Está com febre?'),
+                ('tosse', 'Está com tosse?'),
+                ('coriza', 'Tem coriza?'),
+                ('falta_ar', 'Está com falta de ar?'),
+                ('dor_cabeca', 'Está com dor de cabeça?'),
+                ('manchas', 'Percebeu manchas no corpo?'),
+                ('espirros', 'Está com espirros frequentes?'),
+                ('coceira', 'Tem sentido coceiras?'),
+                ('dor_corpo', 'Está com dores no corpo?'),
+                ('nausea', 'Sente náuseas?'),
+                ('fadiga', 'Está com fadiga ou cansaço extremo?')
+            ] %}
+            <div class="pergunta">
+                <label>{{ pergunta[1] }}</label><br>
+                <input type="radio" name="{{ pergunta[0] }}" value="sim" required> Sim
+                <input type="radio" name="{{ pergunta[0] }}" value="nao"> Não
+            </div>
+            {% endfor %}
+            <button type="submit">Ver Diagnóstico</button>
+        </form>
 
-    <div id="resposta"></div>
-
-    <script>
-        const form = document.getElementById("formDiagnostico");
-        const resposta = document.getElementById("resposta");
-
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-
-            const data = Object.fromEntries(new FormData(form).entries());
-
-            const response = await fetch("http://127.0.0.1:5000/api/diagnostico", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            });
-
-            const result = await response.json();
-            resposta.textContent = result.resposta;
-        });
-    </script>
+        {% if resultado %}
+            <div class="resultado">{{ resultado }}</div>
+        {% endif %}
+    </div>
 </body>
 </html>
